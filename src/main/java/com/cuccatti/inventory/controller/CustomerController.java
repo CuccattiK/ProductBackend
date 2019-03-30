@@ -1,0 +1,118 @@
+package com.cuccatti.inventory.controller;
+
+import java.util.List;
+import java.util.Set;
+
+import javax.validation.Valid;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.cuccatti.inventory.exception.ResourceNotFoundException;
+import com.cuccatti.inventory.model.Address;
+import com.cuccatti.inventory.model.Customer;
+import com.cuccatti.inventory.repository.CustomerRepository;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
+@RestController
+@RequestMapping("/api")
+@Api(value = "customer", description = "Operations pertaining to customers")
+public class CustomerController {
+	private static Logger logger = LogManager.getLogger(CustomerController.class);
+
+	@Autowired
+	CustomerRepository customerRepository;
+
+	@ApiOperation(value = "View a list of existing customers", response = Iterable.class)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Successfully retrieved customers"),
+			@ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+			@ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+			@ApiResponse(code = 404, message = "The resource you were trying to reach is not found") })
+	@GetMapping("/customers")
+	public List<Customer> getAllCustomers() {
+		logger.info("Accessing getAllCustomers");
+		return customerRepository.findAll();
+	}
+
+	@ApiOperation(value = "Add a new customer", response = Iterable.class)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Successfully created new customer"),
+			@ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+			@ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+			@ApiResponse(code = 404, message = "The resource you were trying to reach is not found") })
+	@PostMapping("/customers")
+	public Customer createCustomer(@Valid @RequestBody Customer customer) {
+
+		logger.info("Accessing save Customer for: lastName: {}, firstName: {}", customer.getLastName(),
+				customer.getFirstName());
+		return customerRepository.save(customer);
+	}
+
+	@ApiOperation(value = "Find a customer by id", response = Iterable.class)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Successfully found customer with id of" + "{id}"),
+			@ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+			@ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+			@ApiResponse(code = 404, message = "The resource you were trying to reach is not found") })
+	@GetMapping("/customers/{id}")
+	public Customer getCustomerById(@PathVariable(value = "id") Long customerId) {
+
+		logger.info("Accessing find Customer with id of {}", customerId);
+
+		return customerRepository.findById(customerId)
+				.orElseThrow(() -> new ResourceNotFoundException("Customer", "id", customerId));
+	}
+
+	@ApiOperation(value = "Update a customer by id", response = Iterable.class)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Successfully updated customer with id of" + "{id}"),
+			@ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+			@ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+			@ApiResponse(code = 404, message = "The resource you were trying to reach is not found") })
+	@PutMapping("/customers/{id}")
+	public Customer updateCustomer(@PathVariable(value = "id") Long customerId,
+			@Valid @RequestBody Customer customerDetails) {
+
+		logger.info("Updating Customer with id of {} with lastName: {}, firstName: {}, middleName: {}", customerId,
+				customerDetails.getLastName(), customerDetails.getFirstName());
+
+		Customer customer = customerRepository.findById(customerId)
+				.orElseThrow(() -> new ResourceNotFoundException("Customer", "id", customerId));
+
+		customer.setFirstName(customerDetails.getFirstName());
+		customer.setLastName(customerDetails.getLastName());
+
+		Customer updatedCustomer = customerRepository.save(customer);
+		return updatedCustomer;
+	}
+
+	@ApiOperation(value = "Delete a customer by id", response = Iterable.class)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Successfully deleted customer with id of" + "{id}"),
+			@ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+			@ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+			@ApiResponse(code = 404, message = "The resource you were trying to reach is not found") })
+	@DeleteMapping("/customers/{id}")
+	public ResponseEntity<?> deleteCustomer(@PathVariable(value = "id") Long customerId) {
+		logger.info("Accessing delete customer with customer id of {}.", customerId);
+
+		Customer customer = customerRepository.findById(customerId)
+				.orElseThrow(() -> new ResourceNotFoundException("Customer", "id", customerId));
+
+		customerRepository.delete(customer);
+
+		return ResponseEntity.ok().build();
+	}
+
+
+}
