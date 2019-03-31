@@ -19,60 +19,66 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cuccatti.inventory.constants.ProductConstants;
 import com.cuccatti.inventory.model.User;
 import com.cuccatti.inventory.repository.UserRepository;
+
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 @RestController
 @RequestMapping("/api")
 public class UserController {
- 
-    @Autowired
-    private UserRepository userRepository;
 
- 
-    @GetMapping("/users")
-    public List<User> getAllUsers() {
-         return userRepository.findAll();
-    }
+	@Autowired
+	private UserRepository userRepository;
 
-    @GetMapping("/users/{id}")
-    public ResponseEntity<User> getUserById(
-      @PathVariable(value = "id") Long userId) throws ResourceNotFoundException {
-         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found :: " + userId));
-        return ResponseEntity.ok().body(user);
-    }
+	@ApiOperation(value = "View a list of existing users", response = Iterable.class)
+	@GetMapping("/users")
+	public List<User> getAllUsers() {
+		return userRepository.findAll();
+	}
 
-    @PostMapping("/users")
-    public User createUser(@Valid @RequestBody User user) {
-        return userRepository.save(user);
-    }
+	@ApiOperation(value = "Find use by id", response = Iterable.class)
+	@GetMapping("/users/{id}")
+	public ResponseEntity<User> getUserById(@PathVariable(value = "id") Long userId) throws ResourceNotFoundException {
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new ResourceNotFoundException("User not found :: " + userId));
+		return ResponseEntity.ok().body(user);
+	}
 
-    @PutMapping("/users/{id}")
-    public ResponseEntity<User> updateUser(
-      @PathVariable(value = "id") Long userId,
-      @Valid @RequestBody User userDetails) throws ResourceNotFoundException {
-        User user = userRepository.findById(userId)
-          .orElseThrow(() -> new ResourceNotFoundException("User not found :: " + userId));
-  
-        user.setEmailId(userDetails.getEmailId());
-        user.setLastName(userDetails.getLastName());
-        user.setFirstName(userDetails.getFirstName());
-        user.setLastModifiedDate(new Date());
-        
-        final User updatedUser = userRepository.save(user);
-        return ResponseEntity.ok(updatedUser);
-    }
+	@ApiOperation(value = "Add a new user", response = Iterable.class)
+	@PostMapping("/users")
+	public User createUser(@Valid @RequestBody User user) {
+		return userRepository.save(user);
+	}
 
-    @DeleteMapping("/users/{id}")
-    public Map<String, Boolean> deleteUser(
-         @PathVariable(value = "id") Long userId) throws ResourceNotFoundException {
-         User user = userRepository.findById(userId)
-          .orElseThrow(() -> new ResourceNotFoundException("User not found :: " + userId));
+	@ApiOperation(value = "update a user", response = Iterable.class)
+	@PutMapping("/users/{id}")
+	public ResponseEntity<User> updateUser(@PathVariable(value = "id") Long userId,
+			@Valid @RequestBody User userDetails) throws ResourceNotFoundException {
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new ResourceNotFoundException("User not found :: " + userId));
 
-        userRepository.delete(user);
-         Map<String, Boolean> response = new HashMap<>();
-         response.put("deleted", Boolean.TRUE);
-         return response;
-    }
+		user.setEmailId(userDetails.getEmailId());
+		user.setLastName(userDetails.getLastName());
+		user.setFirstName(userDetails.getFirstName());
+		user.setLastModifiedDate(new Date());
+
+		final User updatedUser = userRepository.save(user);
+		return ResponseEntity.ok(updatedUser);
+	}
+
+	@ApiOperation(value = "Delete a user by id", response = Iterable.class)
+	@DeleteMapping("/users/{id}")
+	public Map<String, Boolean> deleteUser(@PathVariable(value = "id") Long userId) throws ResourceNotFoundException {
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new ResourceNotFoundException("User not found :: " + userId));
+
+		userRepository.delete(user);
+		Map<String, Boolean> response = new HashMap<>();
+		response.put("deleted", Boolean.TRUE);
+		return response;
+	}
 }
