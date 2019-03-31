@@ -27,9 +27,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "customer")
-@EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = { "createdAt", "updatedAt" }, allowGetters = true)
-public class Customer implements Serializable {
+public class Customer extends Auditable implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -45,16 +43,6 @@ public class Customer implements Serializable {
 
 	@ManyToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
 	private Set<Address> addresses;
-
-	@Column(nullable = false, updatable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	@CreatedDate
-	private Date createdAt;
-
-	@Column(nullable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	@LastModifiedDate
-	private Date updatedAt;
 
 	public Long getId() {
 		return id;
@@ -78,22 +66,6 @@ public class Customer implements Serializable {
 
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
-	}
-
-	public Date getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	public Date getUpdatedAt() {
-		return updatedAt;
-	}
-
-	public void setUpdatedAt(Date updatedAt) {
-		this.updatedAt = updatedAt;
 	}
 
 	public Set<Address> getAddresses() {
