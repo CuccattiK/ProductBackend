@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +32,8 @@ import io.swagger.annotations.ApiResponses;
 @RestController
 @RequestMapping("/api")
 public class UserController {
+	
+	private static Logger logger = LogManager.getLogger(CustomerController.class);
 
 	@Autowired
 	private UserRepository userRepository;
