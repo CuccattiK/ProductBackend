@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cuccatti.inventory.model.User;
 import com.cuccatti.inventory.repository.UserRepository;
 
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 @RequestMapping("/api")
 public class UserController {
@@ -29,7 +31,7 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
- 
+	@ApiOperation(value = "View a list of existing users", response = Iterable.class)
     @GetMapping("/users")
     public List<User> getAllUsers() {
          return userRepository.findAll();
