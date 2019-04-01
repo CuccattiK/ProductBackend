@@ -8,12 +8,19 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import com.cuccatti.inventory.controller.CustomerController;
+
+import io.swagger.annotations.Api;
 
 @Entity
 @Table(name = "users")
 @EntityListeners(AuditingEntityListener.class)
 public class User extends Auditable {
+	private static Logger logger = LogManager.getLogger(CustomerController.class);
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
