@@ -1,13 +1,14 @@
 package com.cuccatti.inventory.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,8 +27,9 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/api")
-@Api(value = "customer", description = "Operations pertaining to customers")
+@Api(value = "customer")
 public class CustomerController {
+
 	private static Logger logger = LogManager.getLogger(CustomerController.class);
 
 	@Autowired
@@ -53,7 +55,6 @@ public class CustomerController {
 	@ApiOperation(value = "Add a new customer", response = Iterable.class)
 	@PostMapping("/customers")
 	public Customer createCustomer(@Valid @RequestBody Customer customer) {
-
 		logger.info("Accessing save Customer for: lastName: {}, firstName: {}", customer.getLastName(),
 				customer.getFirstName());
 		return customerRepository.save(customer);
@@ -72,22 +73,25 @@ public class CustomerController {
 
 		customer.setFirstName(customerDetails.getFirstName());
 		customer.setLastName(customerDetails.getLastName());
+		customer.setAddresses(customerDetails.getAddresses());
 
-		Customer updatedCustomer = customerRepository.save(customer);
-		return updatedCustomer;
+		return customerRepository.save(customer);
 	}
 
 	@ApiOperation(value = "Delete a customer by id", response = Iterable.class)
 	@DeleteMapping("/customers/{id}")
-	public ResponseEntity<?> deleteCustomer(@PathVariable(value = "id") Long customerId) {
+	public Map<String, Boolean> deleteCustomer(@PathVariable(value = "id") Long customerId) {
 		logger.info("Accessing delete customer with customer id of {}.", customerId);
 
 		Customer customer = customerRepository.findById(customerId)
 				.orElseThrow(() -> new ResourceNotFoundException("Customer", "id", customerId));
 
 		customerRepository.delete(customer);
-
-		return ResponseEntity.ok().build();
+		
+		customerRepository.delete(customer);
+		Map<String, Boolean> response = new HashMap<>();
+		response.put("deleted", Boolean.TRUE);
+		return response;
 	}
 
 }

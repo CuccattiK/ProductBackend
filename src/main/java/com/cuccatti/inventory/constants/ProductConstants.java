@@ -1,5 +1,6 @@
 package com.cuccatti.inventory.constants;
 
 public class ProductConstants {
-	// TODO ADD CONSTANTS
+	public static final String userNotFound = "User not found ::";
+	public static final String customerNotFound = "Customer not found ::";
 }

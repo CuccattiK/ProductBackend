@@ -11,7 +11,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cuccatti.inventory.constants.ProductConstants;
 import com.cuccatti.inventory.model.User;
 import com.cuccatti.inventory.repository.UserRepository;
 
@@ -29,9 +29,9 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/api")
-@Api(value = "customer", description = "Operations pertaining to uers")
+@Api(value = "customer")
 public class UserController {
-	
+
 	private static Logger logger = LogManager.getLogger(CustomerController.class);
 
 	@Autowired
@@ -46,49 +46,48 @@ public class UserController {
 
 	@ApiOperation(value = "Find user by id", response = Iterable.class)
 	@GetMapping("/users/{id}")
-	public ResponseEntity<User> getUserById(@PathVariable(value = "id") Long userId) throws ResourceNotFoundException {
-		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new ResourceNotFoundException("User not found :: " + userId));
+	public User getUserById(@PathVariable(value = "id") Long userId) {
+
 		logger.info("Accessing find User with id of {}", userId);
-		return ResponseEntity.ok().body(user);
+
+		return userRepository.findById(userId)
+				.orElseThrow(() -> new ResourceNotFoundException(ProductConstants.userNotFound + userId));
 	}
 
 	@ApiOperation(value = "Add a new user", response = Iterable.class)
 	@PostMapping("/users")
 	public User createUser(@Valid @RequestBody User user) {
-		logger.info("Accessing save User for: lastName: {}, firstName: {}", user.getLastName(),
-				user.getFirstName());
+		logger.info("Accessing save User for: lastName: {}, firstName: {}", user.getLastName(), user.getFirstName());
 		return userRepository.save(user);
 	}
 
 	@ApiOperation(value = "update a user", response = Iterable.class)
 	@PutMapping("/users/{id}")
-	public ResponseEntity<User> updateUser(@PathVariable(value = "id") Long userId,
-			@Valid @RequestBody User userDetails) throws ResourceNotFoundException {
-		
-		logger.info("Updating user with id of {} with lastName: {}, firstName: {}", userId,
-				userDetails.getLastName(), userDetails.getFirstName());
+	public User updateUser(@PathVariable(value = "id") Long userId,
+			@Valid @RequestBody User userDetails) {
+
+		logger.info("Updating user with id of {} with lastName: {}, firstName: {}", userId, userDetails.getLastName(),
+				userDetails.getFirstName());
 
 		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new ResourceNotFoundException("User not found :: " + userId));
+				.orElseThrow(() -> new ResourceNotFoundException(ProductConstants.userNotFound + userId));
 
 		user.setEmailId(userDetails.getEmailId());
 		user.setLastName(userDetails.getLastName());
 		user.setFirstName(userDetails.getFirstName());
 		user.setLastModifiedDate(new Date());
 
-		final User updatedUser = userRepository.save(user);
-		return ResponseEntity.ok(updatedUser);
+		return userRepository.save(user);
 	}
 
 	@ApiOperation(value = "Delete a user by id", response = Iterable.class)
 	@DeleteMapping("/users/{id}")
-	public Map<String, Boolean> deleteUser(@PathVariable(value = "id") Long userId) throws ResourceNotFoundException {
-		
+	public Map<String, Boolean> deleteUser(@PathVariable(value = "id") Long userId) {
+
 		logger.info("Accessing delete user with id of {}.", userId);
 
 		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new ResourceNotFoundException("User not found :: " + userId));
+				.orElseThrow(() -> new ResourceNotFoundException(ProductConstants.userNotFound + userId));
 
 		userRepository.delete(user);
 		Map<String, Boolean> response = new HashMap<>();
