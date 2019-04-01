@@ -1,7 +1,5 @@
 package com.cuccatti.inventory;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
@@ -17,8 +15,6 @@ import com.cuccatti.inventory.security.impl.AuditorAwareImpl;
 @EnableJpaAuditing(auditorAwareRef = "auditorAware")
 public class WebApplication extends SpringBootServletInitializer {
 
-	private static final Logger LOGGER = LogManager.getLogger(WebApplication.class);
-
 	@Bean
 	public AuditorAware<String> auditorAware() {
 		return new AuditorAwareImpl();
@@ -26,7 +22,6 @@ public class WebApplication extends SpringBootServletInitializer {
 
 	public static void main(String[] args) {
 		SpringApplication.run(WebApplication.class, args);
-		LOGGER.info("Starting Spring App");
 	}
 
 }

@@ -18,7 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cuccatti.inventory.exception.ResourceNotFoundException;
+import com.cuccatti.inventory.constants.ProductConstants;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import com.cuccatti.inventory.model.Customer;
 import com.cuccatti.inventory.repository.CustomerRepository;
 
@@ -49,7 +50,7 @@ public class CustomerController {
 		logger.info("Accessing find Customer with id of {}", customerId);
 
 		return customerRepository.findById(customerId)
-				.orElseThrow(() -> new ResourceNotFoundException("Customer", "id", customerId));
+				.orElseThrow(() -> new ResourceNotFoundException(ProductConstants.CUSTOMER_NOT_FOUND + customerId));
 	}
 
 	@ApiOperation(value = "Add a new customer", response = Iterable.class)
@@ -69,7 +70,7 @@ public class CustomerController {
 				customerDetails.getLastName(), customerDetails.getFirstName());
 
 		Customer customer = customerRepository.findById(customerId)
-				.orElseThrow(() -> new ResourceNotFoundException("Customer", "id", customerId));
+				.orElseThrow(() -> new ResourceNotFoundException(ProductConstants.CUSTOMER_NOT_FOUND + customerId));
 
 		customer.setFirstName(customerDetails.getFirstName());
 		customer.setLastName(customerDetails.getLastName());
@@ -84,7 +85,7 @@ public class CustomerController {
 		logger.info("Accessing delete customer with customer id of {}.", customerId);
 
 		Customer customer = customerRepository.findById(customerId)
-				.orElseThrow(() -> new ResourceNotFoundException("Customer", "id", customerId));
+				.orElseThrow(() -> new ResourceNotFoundException(ProductConstants.CUSTOMER_NOT_FOUND + customerId));
 
 		customerRepository.delete(customer);
 		

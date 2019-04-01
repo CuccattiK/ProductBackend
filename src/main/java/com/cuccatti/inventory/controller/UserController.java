@@ -51,7 +51,7 @@ public class UserController {
 		logger.info("Accessing find User with id of {}", userId);
 
 		return userRepository.findById(userId)
-				.orElseThrow(() -> new ResourceNotFoundException(ProductConstants.userNotFound + userId));
+				.orElseThrow(() -> new ResourceNotFoundException(ProductConstants.USER_NOT_FOUND + userId));
 	}
 
 	@ApiOperation(value = "Add a new user", response = Iterable.class)
@@ -70,7 +70,7 @@ public class UserController {
 				userDetails.getFirstName());
 
 		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new ResourceNotFoundException(ProductConstants.userNotFound + userId));
+				.orElseThrow(() -> new ResourceNotFoundException(ProductConstants.USER_NOT_FOUND + userId));
 
 		user.setEmailId(userDetails.getEmailId());
 		user.setLastName(userDetails.getLastName());
@@ -87,7 +87,7 @@ public class UserController {
 		logger.info("Accessing delete user with id of {}.", userId);
 
 		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new ResourceNotFoundException(ProductConstants.userNotFound + userId));
+				.orElseThrow(() -> new ResourceNotFoundException(ProductConstants.USER_NOT_FOUND + userId));
 
 		userRepository.delete(user);
 		Map<String, Boolean> response = new HashMap<>();
