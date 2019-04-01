@@ -1,7 +1,6 @@
 package com.cuccatti.inventory.controller;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -19,14 +18,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cuccatti.inventory.exception.ResourceNotFoundException;
-import com.cuccatti.inventory.model.Address;
 import com.cuccatti.inventory.model.Customer;
 import com.cuccatti.inventory.repository.CustomerRepository;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 
 @RestController
 @RequestMapping("/api")
@@ -43,7 +39,7 @@ public class CustomerController {
 		logger.info("Accessing getAllCustomers");
 		return customerRepository.findAll();
 	}
-	
+
 	@ApiOperation(value = "Find a customer by id", response = Iterable.class)
 	@GetMapping("/customers/{id}")
 	public Customer getCustomerById(@PathVariable(value = "id") Long customerId) {
@@ -63,13 +59,12 @@ public class CustomerController {
 		return customerRepository.save(customer);
 	}
 
-
 	@ApiOperation(value = "Update a customer by id", response = Iterable.class)
 	@PutMapping("/customers/{id}")
 	public Customer updateCustomer(@PathVariable(value = "id") Long customerId,
 			@Valid @RequestBody Customer customerDetails) {
 
-		logger.info("Updating Customer with id of {} with lastName: {}, firstName: {}, middleName: {}", customerId,
+		logger.info("Updating Customer with id of {} with lastName: {}, firstName: {}", customerId,
 				customerDetails.getLastName(), customerDetails.getFirstName());
 
 		Customer customer = customerRepository.findById(customerId)
@@ -94,6 +89,5 @@ public class CustomerController {
 
 		return ResponseEntity.ok().build();
 	}
-
 
 }

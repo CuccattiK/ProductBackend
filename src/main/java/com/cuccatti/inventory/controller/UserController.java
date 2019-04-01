@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
@@ -19,17 +21,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cuccatti.inventory.constants.ProductConstants;
 import com.cuccatti.inventory.model.User;
 import com.cuccatti.inventory.repository.UserRepository;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 
 @RestController
 @RequestMapping("/api")
+@Api(value = "customer", description = "Operations pertaining to uers")
 public class UserController {
+	
+	private static Logger logger = LogManager.getLogger(CustomerController.class);
 
 	@Autowired
 	private UserRepository userRepository;
@@ -37,20 +40,24 @@ public class UserController {
 	@ApiOperation(value = "View a list of existing users", response = Iterable.class)
 	@GetMapping("/users")
 	public List<User> getAllUsers() {
+		logger.info("Accessing getAllUsers");
 		return userRepository.findAll();
 	}
 
-	@ApiOperation(value = "Find use by id", response = Iterable.class)
+	@ApiOperation(value = "Find user by id", response = Iterable.class)
 	@GetMapping("/users/{id}")
 	public ResponseEntity<User> getUserById(@PathVariable(value = "id") Long userId) throws ResourceNotFoundException {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new ResourceNotFoundException("User not found :: " + userId));
+		logger.info("Accessing find User with id of {}", userId);
 		return ResponseEntity.ok().body(user);
 	}
 
 	@ApiOperation(value = "Add a new user", response = Iterable.class)
 	@PostMapping("/users")
 	public User createUser(@Valid @RequestBody User user) {
+		logger.info("Accessing save User for: lastName: {}, firstName: {}", user.getLastName(),
+				user.getFirstName());
 		return userRepository.save(user);
 	}
 
@@ -58,6 +65,10 @@ public class UserController {
 	@PutMapping("/users/{id}")
 	public ResponseEntity<User> updateUser(@PathVariable(value = "id") Long userId,
 			@Valid @RequestBody User userDetails) throws ResourceNotFoundException {
+		
+		logger.info("Updating user with id of {} with lastName: {}, firstName: {}", userId,
+				userDetails.getLastName(), userDetails.getFirstName());
+
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new ResourceNotFoundException("User not found :: " + userId));
 
@@ -73,6 +84,9 @@ public class UserController {
 	@ApiOperation(value = "Delete a user by id", response = Iterable.class)
 	@DeleteMapping("/users/{id}")
 	public Map<String, Boolean> deleteUser(@PathVariable(value = "id") Long userId) throws ResourceNotFoundException {
+		
+		logger.info("Accessing delete user with id of {}.", userId);
+
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new ResourceNotFoundException("User not found :: " + userId));
 

@@ -11,8 +11,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import com.cuccatti.inventory.security.impl.AuditorAwareImpl;
 
-
-
 // Lets us know that this is the class that starts up the spring boot app
 @SpringBootApplication
 //Allows the created at and last updated date to be automatically populated
