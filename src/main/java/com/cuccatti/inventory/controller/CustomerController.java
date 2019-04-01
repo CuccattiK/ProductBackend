@@ -39,7 +39,7 @@ public class CustomerController {
 		logger.info("Accessing getAllCustomers");
 		return customerRepository.findAll();
 	}
-	
+
 	@ApiOperation(value = "Find a customer by id", response = Iterable.class)
 	@GetMapping("/customers/{id}")
 	public Customer getCustomerById(@PathVariable(value = "id") Long customerId) {
@@ -58,7 +58,6 @@ public class CustomerController {
 				customer.getFirstName());
 		return customerRepository.save(customer);
 	}
-
 
 	@ApiOperation(value = "Update a customer by id", response = Iterable.class)
 	@PutMapping("/customers/{id}")
@@ -90,6 +89,5 @@ public class CustomerController {
 
 		return ResponseEntity.ok().build();
 	}
-
 
 }
