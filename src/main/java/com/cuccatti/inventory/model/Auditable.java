@@ -19,17 +19,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(value = { "createdDate", "lastModifiedDate" }, allowGetters = true)
 public abstract class Auditable {
 
-
 	@CreatedDate
 	@Temporal(TIMESTAMP)
 	protected Date createdDate;
-
 
 	@LastModifiedDate
 	@Temporal(TIMESTAMP)
 	protected Date lastModifiedDate;
 
-	
 	public Date getCreatedDate() {
 		return createdDate;
 	}
@@ -37,7 +34,6 @@ public abstract class Auditable {
 	public void setCreatedDate(Date createdDate) {
 		this.createdDate = createdDate;
 	}
-
 
 	public Date getLastModifiedDate() {
 		return lastModifiedDate;

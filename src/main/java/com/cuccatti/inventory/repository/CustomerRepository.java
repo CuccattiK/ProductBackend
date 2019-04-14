@@ -11,8 +11,11 @@ import com.cuccatti.inventory.model.Customer;
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
+	@Query(nativeQuery = true, value = "select * from customer c where c.frst_nm = ?")
+	List<Customer> findCustomerByFirstname(String firstName);
+
 	@Query(nativeQuery = true, value = "SELECT * FROM customer WHERE lst_nm = ?1")
-	Customer findCustomerByLastname(String lastname);
+	Customer findCustomerByLastname(String lastName);
 
 	@Query(nativeQuery = true, value = "select C.*, A.* from customer C inner join customer_addresses ca on C.id = ca.customers_id inner join address A on A.id = ca.addresses_id")
 	List<Customer> findAll();
