@@ -15,12 +15,12 @@ import javax.persistence.Table;
 
 import javax.validation.constraints.NotBlank;
 
-@Entity 
+@Entity
 @Table(name = "customer")
 public class Customer extends Auditable implements Serializable {
-	
+
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
@@ -36,8 +36,10 @@ public class Customer extends Auditable implements Serializable {
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Address> addresses;
 
-	public Customer() {}
-	
+	public Customer() {
+
+	}
+
 	public Customer(long id, String firstName, String lastName) {
 		this.id = id;
 		this.firstName = firstName;

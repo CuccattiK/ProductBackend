@@ -55,10 +55,10 @@ public class CustomerController {
 
 	@ApiOperation(value = "Update a customer", response = Iterable.class)
 	@PutMapping("/customers")
-	public void updateCustomer(@Valid @RequestBody Customer customerDetails) {
+	public Customer updateCustomer(@Valid @RequestBody Customer customerDetails) {
 		logger.info("Updating Customer with id of {} with lastName: {}, firstName: {}", customerDetails.getId(),
 				customerDetails.getLastName(), customerDetails.getFirstName());
-		customerService.createCustomer(customerDetails);
+		return customerService.updateCustomer(customerDetails);
 	}
 
 	@ApiOperation(value = "Delete a customer by id", response = Iterable.class)
