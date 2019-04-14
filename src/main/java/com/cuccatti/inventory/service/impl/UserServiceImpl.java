@@ -34,14 +34,14 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void updateUser(User userDetails) {
+	public User updateUser(User userDetails) {
 		User user = userRepository.findById(userDetails.getId()).orElseThrow(
 				() -> new ResourceNotFoundException(ProductConstants.USER_NOT_FOUND + userDetails.getId()));
 
 		user.setFirstName(userDetails.getFirstName());
 		user.setLastName(userDetails.getLastName());
 		user.setEmailId(userDetails.getEmailId());
-		userRepository.save(user);
+		return userRepository.save(user);
 	}
 
 	@Override

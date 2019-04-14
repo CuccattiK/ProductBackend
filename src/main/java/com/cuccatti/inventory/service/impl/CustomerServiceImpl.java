@@ -34,14 +34,14 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public void updateCustomer(Customer customerDetails) {
+	public Customer updateCustomer(Customer customerDetails) {
 		Customer customer = customerRepository.findById(customerDetails.getId())
 				.orElseThrow(() -> new ResourceNotFoundException(ProductConstants.CUSTOMER_NOT_FOUND + customerDetails.getId()));
 
 		customer.setFirstName(customerDetails.getFirstName());
 		customer.setLastName(customerDetails.getLastName());
 		customer.setAddresses(customerDetails.getAddresses());
-		customerRepository.save(customer);
+		return customerRepository.save(customer);
 	}
 
 	@Override

@@ -55,10 +55,10 @@ public class UserController {
 
 	@ApiOperation(value = "update a user", response = Iterable.class)
 	@PutMapping("/users")
-	public void updateUser(@Valid @RequestBody User userDetails) {
+	public User updateUser(@Valid @RequestBody User userDetails) {
 		logger.info("Updating user with id of {} with lastName: {}, firstName: {}", userDetails.getId(),
 				userDetails.getLastName(), userDetails.getFirstName());
-		userService.createUser(userDetails);
+		return userService.updateUser(userDetails);
 	}
 
 	@ApiOperation(value = "Delete a user by id", response = Iterable.class)
