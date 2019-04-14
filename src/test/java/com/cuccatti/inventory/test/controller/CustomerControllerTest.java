@@ -1,72 +1,86 @@
 package com.cuccatti.inventory.test.controller;
 
-import static com.jayway.restassured.RestAssured.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
+import com.cuccatti.inventory.controller.CustomerController;
 import com.cuccatti.inventory.model.Customer;
-import com.cuccatti.inventory.repository.CustomerRepository;
+import com.cuccatti.inventory.util.Utils;
+
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = CustomerControllerTest.class)
+@SpringBootTest
+@WebAppConfiguration
 public class CustomerControllerTest {
 
-	final static String url = "http://localhost:8080";
-	final static String endpoint = "/api/customers/";
+	final static String URL = "http://localhost:8080";
+	final static String ENDPOINT = "/api/customers/";
+	final static String GET_ALL_CUSTOMERS = URL + ENDPOINT;
+	final static String GET_CUSTOMER_BY_ID = URL + ENDPOINT + "1";
+	final static String CREATE_CUSTOMER = URL + ENDPOINT;
+	final static String UPDATE_CUSTOMER = URL + ENDPOINT;
+	final static String DELETE_CUSTOMER = URL + ENDPOINT + "1";
 
-	/*
-	 * Mockito is a mocking framework, JAVA-based library that is used for effective unit testing of 
-	 * JAVA applications. Mockito is used to mock interfaces so that a dummy functionality can be 
-	 * added to a mock interface that can be used in unit testing.
-	 */
-	@MockBean
-	private Customer customer;
+	private MockMvc mockMvc;
 
-	@MockBean
-	private CustomerRepository customerRepository;
+	@Autowired
+	CustomerController customerController;
 
-	@Test
-	public void contextLoads() {
+	@Autowired
+	private WebApplicationContext context;
+
+	@Before
+	public void setUp() {
+		mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
 	}
 
 	@Test
-	public void getCustomerFailesWhenInvalidCustomerId() {
-		given().when().get(endpoint + "999").then().statusCode(404);
+	public void getAllCustomers() throws Exception {
+		mockMvc.perform(get(GET_ALL_CUSTOMERS).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+		// Mockito.verify(customerController, Mockito.times(1)).getAllCustomers();
 	}
 
 	@Test
-	public void getCustomerSucceedsWhenValidCustomerId() {
-
-		given().when().get(endpoint + "1").then().statusCode(200);
+	public void findCustomerById() throws Exception {
+		mockMvc.perform(get(GET_CUSTOMER_BY_ID).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+	}
+	
+	@Test
+	public void createCustomer() throws Exception {
+		Customer customer = new Customer(1L, "John", "Doe");
+	    mockMvc.perform(MockMvcRequestBuilders.post(CREATE_CUSTOMER)
+				  .content(Utils.asJsonString(customer))
+				  .contentType(MediaType.APPLICATION_JSON)
+				  .accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+	}
+	
+	@Test
+	public void updateCustomer() throws Exception {
+		Customer customer = new Customer(1L, "John", "Doe");
+        mockMvc.perform(MockMvcRequestBuilders.put(UPDATE_CUSTOMER)
+				  .content(Utils.asJsonString(customer))
+				  .contentType(MediaType.APPLICATION_JSON)
+				  .accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
 	}
 
 	@Test
-	public void addValidCustomer() {
-		Map<String, String> customer = new HashMap<>();
-		customer.put("firstName", "Kyle");
-		customer.put("lastName", "Cuccatti");
-		customer.put("middleName", "Jamison");
-		given().contentType("application/json").body(customer).when().post("/api/customers").then().statusCode(200);
+	public void deleteCustomer() throws Exception {
+		mockMvc.perform(delete(DELETE_CUSTOMER).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
 	}
 
-	@Test
-	public void addCustomerFailsWhenInvalidJson() {
-		Map<String, String> customer = new HashMap<>();
-		customer.put("FirstNm", "Kyles Customer");
-		customer.put("LastNm", "Kyles Content");
-		given().contentType("application/json").body(customer).when().post("/api/customers").then().statusCode(400);
-	}
-
-	@Test
-	public void deleteCustomerSucceedsWhenValidCustomerId() {
-		given().when().delete(endpoint + "1").then().statusCode(200);
-	}
-
+	
 }

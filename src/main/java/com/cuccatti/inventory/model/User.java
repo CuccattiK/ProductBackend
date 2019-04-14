@@ -28,6 +28,24 @@ public class User extends Auditable {
 	@Column(name = "email_address", nullable = false)
 	private String emailId;
 
+	public User() {
+	}
+
+	public User(long id, String firstName, String lastName, String emailId) {
+		super();
+		this.id = id;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.emailId = emailId;
+	}
+
+	public User(String firstName, String lastName, String emailId) {
+		super();
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.emailId = emailId;
+	}
+
 	public long getId() {
 		return id;
 	}

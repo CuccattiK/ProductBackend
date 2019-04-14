@@ -1,4 +1,4 @@
-package com.cuccatti.inventory;
+package com.cuccatti.inventory.test.endpoint;
 
 import static com.jayway.restassured.RestAssured.given;
 
@@ -13,10 +13,8 @@ public class EndpointTest {
 
 	final static String url = "http://localhost:8080";
 	final static String customerEndpoint = "/api/customers/";
-	final static String noteEndpoint = "/api/notes/";
-	final static String productEndpoint = "/api/products/";
-	final static String addressEndpoint = "/api/address/";
-
+	final static String userEndpoint = "/api/users";
+	
 	@Test
 	public void makeSureBackEndIsUp() {
 		given().when().get(url).then().statusCode(200);
@@ -28,18 +26,8 @@ public class EndpointTest {
 	}
 
 	@Test
-	public void pingNoteService() {
-		given().when().get(noteEndpoint).then().statusCode(200);
-	}
-
-	@Test
-	public void pingProductService() {
-		given().when().get(productEndpoint).then().statusCode(200);
-	}
-	
-	@Test
-	public void pingAddressService() {
-		given().when().get(addressEndpoint).then().statusCode(200);
+	public void pingUserService() {
+		given().when().get(userEndpoint).then().statusCode(200);
 	}
 
 }

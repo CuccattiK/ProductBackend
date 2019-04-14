@@ -12,14 +12,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+
 import javax.validation.constraints.NotBlank;
 
-@Entity
+@Entity 
 @Table(name = "customer")
 public class Customer extends Auditable implements Serializable {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+	
+	private static final long serialVersionUID = 1L;
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
 	@NotBlank
@@ -30,8 +33,16 @@ public class Customer extends Auditable implements Serializable {
 	@Column(name = "FRST_NM")
 	private String firstName;
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Address> addresses;
+
+	public Customer() {}
+	
+	public Customer(long id, String firstName, String lastName) {
+		this.id = id;
+		this.firstName = firstName;
+		this.lastName = lastName;
+	}
 
 	public Long getId() {
 		return id;
@@ -64,8 +75,4 @@ public class Customer extends Auditable implements Serializable {
 	public void setAddresses(Set<Address> addresses) {
 		this.addresses = addresses;
 	}
-
-
-	
-
 }

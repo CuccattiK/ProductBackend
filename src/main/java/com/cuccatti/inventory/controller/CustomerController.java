@@ -1,8 +1,6 @@
 package com.cuccatti.inventory.controller;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -18,39 +16,33 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cuccatti.inventory.constants.ProductConstants;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import com.cuccatti.inventory.model.Customer;
-import com.cuccatti.inventory.repository.CustomerRepository;
+import com.cuccatti.inventory.service.CustomerService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/api")
-@Api(value = "customer")
+@Api(value = "/customer")
 public class CustomerController {
 
 	private static Logger logger = LogManager.getLogger(CustomerController.class);
 
 	@Autowired
-	CustomerRepository customerRepository;
+	CustomerService customerService;
 
 	@ApiOperation(value = "View a list of existing customers", response = Iterable.class)
 	@GetMapping("/customers")
 	public List<Customer> getAllCustomers() {
-		logger.info("Accessing getAllCustomers");
-		return customerRepository.findAll();
+		return customerService.getAllCustomers();
 	}
 
 	@ApiOperation(value = "Find a customer by id", response = Iterable.class)
 	@GetMapping("/customers/{id}")
 	public Customer getCustomerById(@PathVariable(value = "id") Long customerId) {
-
 		logger.info("Accessing find Customer with id of {}", customerId);
-
-		return customerRepository.findById(customerId)
-				.orElseThrow(() -> new ResourceNotFoundException(ProductConstants.CUSTOMER_NOT_FOUND + customerId));
+		return customerService.findById(customerId);
 	}
 
 	@ApiOperation(value = "Add a new customer", response = Iterable.class)
@@ -58,41 +50,22 @@ public class CustomerController {
 	public Customer createCustomer(@Valid @RequestBody Customer customer) {
 		logger.info("Accessing save Customer for: lastName: {}, firstName: {}", customer.getLastName(),
 				customer.getFirstName());
-		return customerRepository.save(customer);
+		return customerService.createCustomer(customer);
 	}
 
-	@ApiOperation(value = "Update a customer by id", response = Iterable.class)
-	@PutMapping("/customers/{id}")
-	public Customer updateCustomer(@PathVariable(value = "id") Long customerId,
-			@Valid @RequestBody Customer customerDetails) {
-
-		logger.info("Updating Customer with id of {} with lastName: {}, firstName: {}", customerId,
+	@ApiOperation(value = "Update a customer", response = Iterable.class)
+	@PutMapping("/customers")
+	public void updateCustomer(@Valid @RequestBody Customer customerDetails) {
+		logger.info("Updating Customer with id of {} with lastName: {}, firstName: {}", customerDetails.getId(),
 				customerDetails.getLastName(), customerDetails.getFirstName());
-
-		Customer customer = customerRepository.findById(customerId)
-				.orElseThrow(() -> new ResourceNotFoundException(ProductConstants.CUSTOMER_NOT_FOUND + customerId));
-
-		customer.setFirstName(customerDetails.getFirstName());
-		customer.setLastName(customerDetails.getLastName());
-		customer.setAddresses(customerDetails.getAddresses());
-
-		return customerRepository.save(customer);
+		customerService.createCustomer(customerDetails);
 	}
 
 	@ApiOperation(value = "Delete a customer by id", response = Iterable.class)
 	@DeleteMapping("/customers/{id}")
-	public Map<String, Boolean> deleteCustomer(@PathVariable(value = "id") Long customerId) {
+	public void deleteCustomer(@PathVariable(value = "id") Long customerId) {
 		logger.info("Accessing delete customer with customer id of {}.", customerId);
-
-		Customer customer = customerRepository.findById(customerId)
-				.orElseThrow(() -> new ResourceNotFoundException(ProductConstants.CUSTOMER_NOT_FOUND + customerId));
-
-		customerRepository.delete(customer);
-		
-		customerRepository.delete(customer);
-		Map<String, Boolean> response = new HashMap<>();
-		response.put("deleted", Boolean.TRUE);
-		return response;
+		customerService.deleteCustomer(customerId);
 	}
 
 }
