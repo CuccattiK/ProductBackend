@@ -12,11 +12,19 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-
 import javax.validation.constraints.NotBlank;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "customer")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Customer extends Auditable implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -26,55 +34,59 @@ public class Customer extends Auditable implements Serializable {
 	private Long id;
 
 	@NotBlank
+	@Column(name = "FRST_NM")
+	private String firstName;
+
+	@NotBlank
 	@Column(name = "LST_NM")
 	private String lastName;
 
 	@NotBlank
-	@Column(name = "FRST_NM")
-	private String firstName;
+	@Column(name = "email")
+	private String email;
 
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Address> addresses;
 
-	public Customer() {
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<Phone> phones;
 
-	}
-
-	public Customer(long id, String firstName, String lastName) {
+	public Customer(Long id, @NotBlank String firstName, @NotBlank String lastName, @NotBlank String email) {
+		super();
 		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
+		this.email = email;
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
+	public Customer(Long id, @NotBlank String firstName, @NotBlank String lastName, @NotBlank String email,
+			Set<Address> addresses) {
+		super();
 		this.id = id;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public void setFirstName(String firstName) {
 		this.firstName = firstName;
-	}
-
-	public Set<Address> getAddresses() {
-		return addresses;
-	}
-
-	public void setAddresses(Set<Address> addresses) {
+		this.lastName = lastName;
+		this.email = email;
 		this.addresses = addresses;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o == this)
+			return true;
+		if (!(o instanceof Customer)) {
+			return false;
+		}
+
+		Customer customer = (Customer) o;
+
+		return customer.getEmail().equals(this.email);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = 17;
+		result = 31 * result + this.email.hashCode();
+		return result;
+	}
+
 }

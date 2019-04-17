@@ -35,6 +35,7 @@ public class CustomerController {
 	@ApiOperation(value = "View a list of existing customers", response = Iterable.class)
 	@GetMapping("/customers")
 	public List<Customer> getAllCustomers() {
+		logger.info("Accessing getAllCustomers");
 		return customerService.getAllCustomers();
 	}
 
