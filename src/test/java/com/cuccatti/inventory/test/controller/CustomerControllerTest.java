@@ -1,8 +1,8 @@
 package com.cuccatti.inventory.test.controller;
 
+import static org.mockito.ArgumentMatchers.refEq;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -67,8 +67,10 @@ public class CustomerControllerTest {
 	}
 
 	@Test
-	public void get_all_customer_success() throws Exception {
-		List<Customer> customers = Arrays.asList(new Customer(1, "John", "Doe"), new Customer(2, "Mary", "Smith"));
+	public void getAllCustomersSuccess() throws Exception {
+		List<Customer> customers = Arrays.asList(
+				Customer.builder().id(1L).email("js@yahoo.com").firstName("John").lastName("Smith").build(),
+				Customer.builder().id(2L).email("ms@yahoo.com").firstName("Mary").lastName("Smith").build());
 		when(customerService.getAllCustomers()).thenReturn(customers);
 		mockMvc.perform(get(GET_ALL_CUSTOMERS)).andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
@@ -80,8 +82,8 @@ public class CustomerControllerTest {
 	}
 
 	@Test
-	public void get_customer_by_id_success() throws Exception {
-		Customer customer = new Customer(1, "John", "Smith");
+	public void getCustomerByIdSuccess() throws Exception {
+		Customer customer = Customer.builder().id(1L).email("js@yahoo.com").firstName("John").lastName("Smith").build();
 		when(customerService.findById(1L)).thenReturn(customer);
 		mockMvc.perform(get(GET_CUSTOMER_BY_ID, 1)).andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
@@ -91,8 +93,8 @@ public class CustomerControllerTest {
 	}
 
 	@Test
-	public void create_customer_success() throws Exception {
-		Customer customer = new Customer(1, "John", "Smith");
+	public void createCustomerSucceeds() throws Exception {
+		Customer customer = Customer.builder().id(1L).email("js@yahoo.com").firstName("John").lastName("Smith").build();
 		when(customerService.createCustomer(customer)).thenReturn(customer);
 		mockMvc.perform(
 				post(CREATE_CUSTOMER).contentType(MediaType.APPLICATION_JSON).content(Utils.asJsonString(customer)))
@@ -102,8 +104,8 @@ public class CustomerControllerTest {
 	}
 
 	@Test
-	public void update_customer_success() throws Exception {
-		Customer customer = new Customer(1, "John", "Smith");
+	public void updateCustomerSuccess() throws Exception {
+		Customer customer = Customer.builder().id(1L).email("js@yahoo.com").firstName("John").lastName("Smith").build();
 
 		when(customerService.findById(customer.getId())).thenReturn(customer);
 		when(customerService.updateCustomer(customer)).thenReturn(customer);
@@ -117,8 +119,8 @@ public class CustomerControllerTest {
 	}
 
 	@Test
-	public void delete_customer_success() throws Exception {
-		Customer customer = new Customer(1, "John", "Smith");
+	public void deleteCustomerSuccess() throws Exception {
+		Customer customer = Customer.builder().id(1L).email("js@yahoo.com").firstName("John").lastName("Smith").build();
 
 		doNothing().when(customerService).deleteCustomer(customer.getId());
 		mockMvc.perform(delete(DELETE_CUSTOMER, customer.getId())).andExpect(status().isOk());

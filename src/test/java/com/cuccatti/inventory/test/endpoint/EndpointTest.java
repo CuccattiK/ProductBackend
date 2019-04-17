@@ -13,7 +13,6 @@ public class EndpointTest {
 
 	final static String url = "http://localhost:8080";
 	final static String customerEndpoint = "/api/customers/";
-	final static String userEndpoint = "/api/users";
 	
 	@Test
 	public void makeSureBackEndIsUp() {
@@ -23,11 +22,6 @@ public class EndpointTest {
 	@Test
 	public void pingCustomerService() {
 		given().when().get(customerEndpoint).then().statusCode(200);
-	}
-
-	@Test
-	public void pingUserService() {
-		given().when().get(userEndpoint).then().statusCode(200);
 	}
 
 }
